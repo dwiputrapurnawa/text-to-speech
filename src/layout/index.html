@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <link rel="stylesheet" href="../css/mdb.min.css">
+    <link rel="stylesheet" href="node_modules/mdbootstrap/css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-light bg-dark">
+        <a class="navbar-brand" href="#" style="color: white">
+          <img src="../img/chat.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+          Text-to-Speech
+        </a>
+      </nav>
+      <br>
+      
+
+      <div class="container-fluid">
+
+        <form>
+          <div class="form-group">
+            <select class="custom-select" id="voiceList">
+            </select>
+          </div>
+          <div class="form-group">
+            <textarea class="form-control" id="textInput" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary btn-lg" id="buttonSpeak" type="submit">Speak</button>
+          </div>
+
+        </form>
+      </div>
+
+      <nav>
+        <!-- Footer -->
+        <footer class="page-footer font-small blue">
+
+          <!-- Copyright -->
+          <div class="footer-copyright text-center py-3">© 2020 Copyright:
+            <a href="https://www.facebook.com/ericcornettoo"> Eric Cornetto</a>
+          </div>
+          <!-- Copyright -->
+
+        </footer>
+        <!-- Footer -->
+      </nav>
+
+      
+    <script>
+      var textInput = document.querySelector('#textInput');
+      var voiceList = document.querySelector('#voiceList');
+      var buttonSpeak = document.querySelector('#buttonSpeak');
+      var synth = window.speechSynthesis;
+      var voices = [];
+
+      PopulateVoices();
+      if(speechSynthesis !== undefined){
+          speechSynthesis.onvoiceschanged = PopulateVoices;
+      }
+
+      buttonSpeak.addEventListener('click', () => {
+          var toSpeak = new SpeechSynthesisUtterance(textInput.value);
+          var selectedVoiceName = voiceList.selectedOptions[0].getAttribute('data-name');
+          voices.forEach((voice) => {
+              if(voice.name === selectedVoiceName){
+                  toSpeak.voice = voice;
+              }
+          });
+          synth.speak(toSpeak);
+      });
+
+      function PopulateVoices(){
+          voices = synth.getVoices();
+          var selectedIndex = voiceList.selectedIndex < 0 ? 0 :
+          voiceList.selectedIndex;
+          voiceList.innerHTML = '';
+          voices.forEach((voice) => {
+              var listItem = document.createElement('option');
+              listItem.textContent = voice.name;
+              listItem.setAttribute('data-lang',voice.lang);
+              listItem.setAttribute('data-name',voice.name);
+              voiceList.appendChild(listItem);
+          });
+          voiceList.selectedIndex = selectedIndex;
+      }
+    </script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/popper.min.js"></script>
+    <script type="text/javascript" src="../js/mdb.min.js"></script>
+</body>
+</html>
